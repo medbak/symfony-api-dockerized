@@ -1,0 +1,74 @@
+version: '3.7'
+services:
+
+  app:
+    build:
+      args:
+        PHP_VERSION: ${PHP_VERSION}
+      context: ./docker/php
+      dockerfile: app.dockerfile
+    image: api-challenge:1.0
+    container_name: api-challenge
+    networks:
+      api_net:
+        ipv4_address: 172.26.1.4
+    ports:
+      - 8741:80
+    volumes:
+      - ./docker/php/vhosts:/etc/apache2/sites-enabled
+      - ./:/var/www
+    restart: always
+
+  database:
+    build:
+      context: ./docker/mariadb
+      dockerfile: maria.dockerfile
+      args:
+        MARIADB_VERSION: ${MARIADB_VERSION}
+    volumes:
+      - data:/var/lib/mysql
+    environment:
+      - "MYSQL_USER=admin"
+      - "MYSQL_PASSWORD=3FdwNAdzAEFu"
+      - "MYSQL_ROOT_PASSWORD=wg2bAQhd36aJ"
+    container_name: db_general
+    command: mysqld --sql_mode="NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+    networks:
+      api_net:
+        ipv4_address: 172.26.1.2
+        aliases:
+          - db.server
+    ports:
+      - "3094:3306"
+    restart: always
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - database
+    links:
+      - database
+    ports:
+      - 8756:80
+    container_name: phpmyadmin_general
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: wg2bAQhd36aJ
+      UPLOAD_LIMIT: 30000000000
+    networks:
+      api_net:
+        ipv4_address: 172.26.1.3
+    restart: always
+
+volumes:
+  data:
+
+networks:
+  api_net:
+    name: api-net
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.26.0.0/16
+

@@ -1,0 +1,47 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+
+
+showAll:
+    path: /notebook
+    controller: App\Controller\NotebookController::index
+    methods: GET|HEAD
+    defaults:
+        _format: json
+
+showNotebook:
+    path: /notebook/{notebookId}
+    controller: App\Controller\NotebookController::show
+    methods: GET|HEAD
+    defaults:
+        _format: json
+    requirements:
+        notebookId: '\d+'
+
+createNotebook:
+    path: /notebook
+    controller: App\Controller\NotebookController::create
+    methods: POST
+    defaults:
+        _format: json
+
+updateNotebook:
+    path: /notebook/{notebookId}
+    controller: App\Controller\NotebookController::update
+    methods: PATCH
+    defaults:
+        _format: json
+    requirements:
+        notebookId: '\d+'
+
+deleteNotebook:
+    path: /notebook/{notebookId}
+    controller: App\Controller\NotebookController::delete
+    methods: DELETE
+    defaults:
+        _format: json
+    requirements:
+        notebookId: '\d+'
