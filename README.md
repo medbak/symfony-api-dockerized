@@ -1,4 +1,4 @@
-# FFW Challenge
+# Dockerized symfony API
 
 ## Prepare Environment
 
